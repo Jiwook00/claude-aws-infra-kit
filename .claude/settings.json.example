@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'aws '; then echo \"[$(date '+%Y-%m-%d %H:%M:%S')] $(echo $CLAUDE_TOOL_INPUT | head -c 200)\" >> logs/activity.log; fi"
+            "command": "python3 scripts/log-aws-call.py"
           }
         ]
       }

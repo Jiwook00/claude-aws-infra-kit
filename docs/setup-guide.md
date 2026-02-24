@@ -73,7 +73,7 @@ cd claude-aws-infra-kit
 
 ```bash
 # 생성된 파일이 존재하는지 확인
-ls CLAUDE.md .claude/settings.json state/ logs/
+ls CLAUDE.md .claude/settings.json scripts/log-aws-call.py state/ logs/
 
 # AWS 연결 확인
 aws sts get-caller-identity --profile YOUR_PROFILE

@@ -6,6 +6,7 @@ CLAUDE.md
 # Runtime data — generated during usage
 state/*.json
 logs/*.log
+logs/*.md
 
 # macOS
 .DS_Store
@@ -13,3 +14,6 @@ logs/*.log
 # Editor
 .vscode/
 *.swp
+
+# Local
+local

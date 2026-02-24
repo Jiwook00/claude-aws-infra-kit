@@ -36,12 +36,14 @@ sequenceDiagram
     participant You as User
     participant Claude as Claude
     participant Hook as PostToolUse 훅
+    participant Script as scripts/log-aws-call.py
     participant Logs as logs/activity.log
     participant Docs as CHANGELOG.md / docs/
 
-    You->>Claude: AWS 커맨드 실행 (예: /inventory)
-    Claude->>Hook: 툴 실행 시 훅이 자동 트리거
-    Hook->>Logs: 타임스탬프와 함께 실행 내역 기록
+    You->>Claude: AWS 커맨드 실행 (슬래시 커맨드 또는 자연어 모두 동일)
+    Claude->>Hook: Bash 툴 실행 시 훅이 자동 트리거
+    Hook->>Script: stdin으로 tool_input JSON 전달
+    Script->>Logs: aws 포함 시 타임스탬프와 함께 기록
 
     Note over Logs: [2025-01-15 10:32:01] aws ec2 describe-instances ...
 
@@ -60,7 +62,7 @@ sequenceDiagram
 | ----------------------- | ------------------------------------------------------------------------------------ |
 | **6개 슬래시 커맨드**   | `/inventory`, `/costs`, `/find-unused`, `/audit-sg`, `/plan-removal`, `/update-docs` |
 | **상태 스냅샷**         | 리소스 상태를 JSON으로 저장, 실행할 때마다 이전과 diff 비교                          |
-| **자동 활동 로그**      | Claude Code 훅을 통해 모든 AWS CLI 호출이 자동으로 기록됨                            |
+| **자동 활동 로그**      | `PostToolUse` 훅 → `scripts/log-aws-call.py`로 모든 AWS CLI 호출이 자동 기록됨      |
 | **자동 문서 업데이트**  | `/update-docs`로 CHANGELOG와 레퍼런스 문서를 동기화                                  |
 | **읽기 전용 자동 허용** | 조회 커맨드는 확인 없이 바로 실행                                                    |
 | **보호 리소스 설정**    | 공유 리소스를 등록하면 Claude가 실수로 삭제하지 않음                                 |
@@ -218,6 +220,9 @@ claude-aws-infra-kit/
 │       ├── audit-sg.md            # /audit-sg 커맨드
 │       ├── plan-removal.md        # /plan-removal 커맨드
 │       └── update-docs.md         # /update-docs 커맨드
+│
+├── scripts/
+│   └── log-aws-call.py            # PostToolUse 훅 — AWS CLI 호출을 activity.log에 기록
 │
 ├── docs/
 │   ├── setup-guide.md             # 상세 설정 가이드
